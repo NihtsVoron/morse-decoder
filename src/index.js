@@ -42,39 +42,40 @@ function decode(expr) {
 
     let result ='';
 
-    expr = expr.toLowerCase();
-
-    for (let index = 0; index < expr.length; index++)
+    for (let index = 0; index < expr.length; index=index+10)
     {
-        let element = expr[index];
+        let element = expr.substr(index,10);
 
-        var morse_element = '';
+        if (element =='**********')
+            result = result +' ';
 
-        for (let morse_entry of Object.entries(MORSE_TABLE))
-        {
-            if (morse_entry[1] == element){
-                morse_element=morse_entry[0];
-                break;
+        let indexOfFirst = element.indexOf('1');
+        let morse_element = element.substr(indexOfFirst, 10 - indexOfFirst);
+
+        let morse_value='';
+        for (let i = 0; i < morse_element.length; i=i+2) {
+            let element_morse = morse_element.substr(i, 2);
+
+            if (element_morse=='10')
+            {
+                morse_value=morse_value+'.';
+                continue;
+            }
+
+            if (element_morse=='11')
+            {
+                morse_value=morse_value+'-';
+                continue;
             }
         }
 
-        if (morse_element == '')
+        for (let morse_entry of Object.entries(MORSE_TABLE))
         {
-            result = result+morse_element.padStart(10, '*');
-            continue;
+            if (morse_entry[0] == morse_value){
+                result=result+morse_entry[1];
+                break;
+            }
         }
-
-        let morse_value ='';
-        for (let i = 0; i < morse_element.length; i++) {
-            let element = morse_element[i];
-            if (element ='.')
-                morse_value = morse_value+'10';
-            if (element ='-')
-                morse_value = morse_value+'11';
-        }
-
-        result = result+morse_value.padStart(10, '0');
-
     }
 
     return result;
